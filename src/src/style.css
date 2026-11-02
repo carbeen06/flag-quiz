@@ -3,14 +3,14 @@
 }
 
 :root {
-    --bg: #07070a;
-    --panel: #111116;
-    --panel-2: #17171e;
-    --gold: #d4af37;
-    --gold-dark: #b8932a;
-    --text: #f1eee6;
-    --muted: #8d8a99;
-    --border: #26262f;
+    --bg: #080d18;
+    --panel: rgba(17, 24, 39, 0.9);
+    --panel-2: #182235;
+    --gold: #f6c453;
+    --gold-dark: #e8ad2f;
+    --text: #f8fafc;
+    --muted: #9aa8bd;
+    --border: #2a3850;
     --ok: #4ade80;
     --bad: #f87171;
 }
@@ -25,7 +25,8 @@ body {
     font-family: "Segoe UI", system-ui, Arial, sans-serif;
     color: var(--text);
     background:
-        radial-gradient(circle at 50% -10%, #1d1a10 0, transparent 45%),
+        radial-gradient(circle at 15% 0%, rgba(52, 94, 157, 0.35), transparent 35%),
+        radial-gradient(circle at 90% 100%, rgba(246, 196, 83, 0.1), transparent 30%),
         var(--bg);
 }
 
@@ -38,19 +39,37 @@ body {
 /* CABECERA */
 .header {
     text-align: center;
-    margin-bottom: 26px;
+    margin-bottom: 30px;
 }
 
 .logo {
-    font-size: 34px;
-    margin-bottom: 4px;
+    display: inline-flex;
+    width: 58px;
+    height: 58px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    border: 1px solid rgba(246, 196, 83, 0.35);
+    border-radius: 18px;
+    background: rgba(246, 196, 83, 0.1);
+    font-size: 30px;
+}
+
+.eyebrow,
+.section-kicker {
+    margin: 0;
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
 }
 
 .header h1 {
     margin: 0;
-    font-size: 38px;
-    font-weight: 300;
-    letter-spacing: 4px;
+    font-size: clamp(32px, 8vw, 42px);
+    font-weight: 800;
+    letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--gold);
 }
@@ -68,19 +87,59 @@ body {
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 18px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-    text-align: center;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+    text-align: left;
 }
 
 .panel h2 {
     margin: 0 0 10px;
-    font-size: 21px;
-    font-weight: 600;
+    font-size: 22px;
+    font-weight: 750;
 }
 
 .panel > p {
     color: var(--muted);
     line-height: 1.5;
+}
+
+.panel-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.session-badge {
+    flex-shrink: 0;
+    padding: 7px 10px;
+    border: 1px solid rgba(246, 196, 83, 0.3);
+    border-radius: 999px;
+    color: var(--gold);
+    background: rgba(246, 196, 83, 0.08);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.learning-note {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-top: 20px;
+    padding: 12px 14px;
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    background: rgba(246, 196, 83, 0.07);
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.learning-note p {
+    margin: 0;
+}
+
+.learning-note strong {
+    color: var(--text);
 }
 
 .hidden {
@@ -114,6 +173,7 @@ input {
     background: var(--panel-2);
     border: 1px solid var(--border);
     border-radius: 10px;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
 input::placeholder {
@@ -156,6 +216,14 @@ input:disabled {
     font-weight: 700;
     cursor: pointer;
     transition: background 0.2s, transform 0.2s, opacity 0.2s;
+}
+
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+input:focus-visible {
+    outline: 3px solid rgba(246, 196, 83, 0.45);
+    outline-offset: 3px;
 }
 
 .primary-button {
@@ -211,9 +279,21 @@ input:disabled {
     display: flex;
     justify-content: space-between;
     gap: 12px;
+    align-items: flex-end;
     color: var(--muted);
     font-size: 13px;
     font-weight: 600;
+}
+
+.quiz-top .section-kicker {
+    margin-bottom: 5px;
+}
+
+#score {
+    padding: 7px 10px;
+    border-radius: 999px;
+    color: var(--ok);
+    background: rgba(74, 222, 128, 0.1);
 }
 
 .progress-track {
@@ -235,12 +315,12 @@ input:disabled {
 /* Contenedor de bandera con tamaño fijo: nunca se hace enorme */
 .flag-container {
     width: 100%;
-    height: 150px;
+    height: 180px;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 16px;
-    background: var(--panel-2);
+    background: linear-gradient(145deg, #1a2940, var(--panel-2));
     border: 1px solid var(--border);
     border-radius: 14px;
 }
@@ -305,11 +385,24 @@ input:disabled {
     text-align: left;
 }
 
+.stats strong {
+    color: var(--gold);
+}
+
 footer {
     margin: 24px 0 0;
     text-align: center;
     color: var(--muted);
     font-size: 12px;
+}
+
+footer span:first-child {
+    color: var(--text);
+}
+
+.footer-divider {
+    margin: 0 5px;
+    color: var(--border);
 }
 
 footer a {
@@ -325,8 +418,13 @@ footer a {
         padding: 24px 18px;
     }
 
-    .header h1 {
-        font-size: 30px;
+    .panel-heading {
+        display: block;
+    }
+
+    .session-badge {
+        display: inline-block;
+        margin-top: 4px;
     }
 
     .flag-container {

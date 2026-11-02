@@ -3,22 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aprende a reconocer las banderas del mundo con sesiones de práctica adaptadas a tu ritmo.">
+    <meta name="theme-color" content="#111827">
     <title>Flag Quiz | Aprende las banderas</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="/src/style.css">
+    <script type="module" src="/src/script.js"></script>
 </head>
 <body>
     <main class="app">
         <header class="header">
-            <div class="logo">🌍</div>
+            <div class="logo" aria-hidden="true">🌍</div>
+            <p class="eyebrow">Aprendizaje activo</p>
             <h1>Flag Quiz</h1>
-            <p>Pon a prueba cuánto sabes de geografía.</p>
+            <p>Entrena tu memoria y reconoce las banderas del mundo.</p>
         </header>
 
         <!-- PANTALLA 1: ELEGIR RANGO -->
         <section id="setup" class="panel">
-            <h2>Prepara tu quiz</h2>
-            <p>Elige cómo quieres practicar.</p>
+            <div class="panel-heading">
+                <div>
+                    <p class="section-kicker">Paso 1 de 2</p>
+                    <h2>Prepara tu sesión</h2>
+                </div>
+                <span class="session-badge">193 banderas</span>
+            </div>
+            <p>Empieza por una zona concreta o atrévete con el mapa completo.</p>
 
             <div class="field-group">
                 <label for="mode">Tipo de selección</label>
@@ -55,21 +64,25 @@
                 </select>
             </div>
 
-            <p id="selection-info" class="info"></p>
+            <p id="selection-info" class="info" aria-live="polite"></p>
 
             <button id="start-button" class="primary-button">
                 Empezar a practicar →
             </button>
 
-            <p class="small-note">
-                Sin opciones múltiples: escribe el nombre del país.
-            </p>
+            <div class="learning-note">
+                <span aria-hidden="true">💡</span>
+                <p><strong>Consejo:</strong> escribe el nombre sin preocuparte por tildes o mayúsculas.</p>
+            </div>
         </section>
 
         <!-- PANTALLA 2: QUIZ -->
         <section id="quiz" class="panel hidden">
             <div class="quiz-top">
-                <span id="progress">Pregunta 1</span>
+                <div>
+                    <p class="section-kicker">Paso 2 de 2</p>
+                    <span id="progress">Pregunta 1</span>
+                </div>
                 <span id="score">0 aciertos</span>
             </div>
 
@@ -82,7 +95,7 @@
             </div>
 
             <h2>¿De qué país es esta bandera?</h2>
-            <p id="round-info" class="info"></p>
+            <p id="round-info" class="info" aria-live="polite"></p>
 
             <form id="answer-form">
                 <label for="answer">Nombre del país</label>
@@ -100,7 +113,7 @@
                 </button>
             </form>
 
-            <div id="feedback" class="feedback hidden" aria-live="polite"></div>
+            <div id="feedback" class="feedback hidden" role="status" aria-live="polite"></div>
 
             <button id="next-button" class="secondary-button hidden">
                 Siguiente bandera →
@@ -113,9 +126,9 @@
 
         <!-- PANTALLA 3: RESULTADOS -->
         <section id="results" class="panel hidden">
-            <div class="result-icon">🎉</div>
+            <div class="result-icon" aria-hidden="true">🎉</div>
             <h2>¡Has terminado!</h2>
-            <p id="result-message"></p>
+            <p id="result-message" aria-live="polite"></p>
             <div id="result-stats" class="stats"></div>
             <button id="restart-button" class="primary-button">
                 Elegir otro quiz
@@ -123,7 +136,9 @@
         </section>
 
         <footer>
-            Banderas por
+            <span>Hecho para aprender jugando</span>
+            <span class="footer-divider" aria-hidden="true">·</span>
+            Banderas de
             <a href="https://flagcdn.com" target="_blank" rel="noopener noreferrer">
                 Flagpedia / FlagCDN
             </a>

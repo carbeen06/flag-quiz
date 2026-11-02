@@ -92,6 +92,7 @@ const nextButton = document.getElementById("next-button");
 const quitButton = document.getElementById("quit-button");
 
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const localFlagsPath = "/assets/flags";
 
 // ---------- Estado del juego ----------
 let queue = [];
@@ -288,8 +289,14 @@ function showQuestion() {
     currentCountry = queue[0];
     answered = false;
 
-    flag.src = `https://flagcdn.com/${currentCountry.code}.svg`;
-    flag.alt = "Bandera que debes identificar";
+    flag.src = `${localFlagsPath}/${currentCountry.code}.svg`;
+    flag.alt = "Bandera para identificar";
+    flag.onerror = () => {
+        flag.alt = "No se pudo cargar esta bandera";
+        feedback.className = "feedback incorrect";
+        feedback.textContent = "No se ha podido cargar la bandera local. Inténtalo de nuevo.";
+        feedback.classList.remove("hidden");
+    };
 
     answer.value = "";
     answer.disabled = false;
