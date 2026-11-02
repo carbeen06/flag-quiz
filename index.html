@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flag Quiz | Aprende las banderas</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <main class="app">
+        <header class="header">
+            <div class="logo">🌍</div>
+            <h1>Flag Quiz</h1>
+            <p>Pon a prueba cuánto sabes de geografía.</p>
+        </header>
+
+        <!-- PANTALLA 1: ELEGIR RANGO -->
+        <section id="setup" class="panel">
+            <h2>Prepara tu quiz</h2>
+            <p>Elige cómo quieres practicar.</p>
+
+            <div class="field-group">
+                <label for="mode">Tipo de selección</label>
+                <select id="mode">
+                    <option value="letters">Por rango de letras</option>
+                    <option value="continent">Por continente</option>
+                    <option value="all">Todos los países</option>
+                </select>
+            </div>
+
+            <div id="letter-options" class="field-group">
+                <div class="two-columns">
+                    <div>
+                        <label for="start-letter">Desde la letra</label>
+                        <select id="start-letter"></select>
+                    </div>
+                    <div>
+                        <label for="end-letter">Hasta la letra</label>
+                        <select id="end-letter"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="continent-options" class="field-group hidden">
+                <label for="continent">Continente</label>
+                <select id="continent">
+                    <option value="all">Todos los continentes</option>
+                    <option value="Europa">Europa</option>
+                    <option value="Asia">Asia</option>
+                    <option value="África">África</option>
+                    <option value="América del Norte">América del Norte</option>
+                    <option value="América del Sur">América del Sur</option>
+                    <option value="Oceanía">Oceanía</option>
+                </select>
+            </div>
+
+            <p id="selection-info" class="info"></p>
+
+            <button id="start-button" class="primary-button">
+                Empezar a practicar →
+            </button>
+
+            <p class="small-note">
+                Sin opciones múltiples: escribe el nombre del país.
+            </p>
+        </section>
+
+        <!-- PANTALLA 2: QUIZ -->
+        <section id="quiz" class="panel hidden">
+            <div class="quiz-top">
+                <span id="progress">Pregunta 1</span>
+                <span id="score">0 aciertos</span>
+            </div>
+
+            <div class="progress-track">
+                <div id="progress-bar"></div>
+            </div>
+
+            <div class="flag-container">
+                <img id="flag" src="" alt="Bandera que debes identificar">
+            </div>
+
+            <h2>¿De qué país es esta bandera?</h2>
+            <p id="round-info" class="info"></p>
+
+            <form id="answer-form">
+                <label for="answer">Nombre del país</label>
+                <input
+                    id="answer"
+                    type="text"
+                    placeholder="Escribe el país..."
+                    autocomplete="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    required
+                >
+                <button type="submit" class="primary-button">
+                    Comprobar respuesta
+                </button>
+            </form>
+
+            <div id="feedback" class="feedback hidden" aria-live="polite"></div>
+
+            <button id="next-button" class="secondary-button hidden">
+                Siguiente bandera →
+            </button>
+
+            <button id="quit-button" class="link-button">
+                Salir y elegir otro rango
+            </button>
+        </section>
+
+        <!-- PANTALLA 3: RESULTADOS -->
+        <section id="results" class="panel hidden">
+            <div class="result-icon">🎉</div>
+            <h2>¡Has terminado!</h2>
+            <p id="result-message"></p>
+            <div id="result-stats" class="stats"></div>
+            <button id="restart-button" class="primary-button">
+                Elegir otro quiz
+            </button>
+        </section>
+
+        <footer>
+            Banderas por
+            <a href="https://flagcdn.com" target="_blank" rel="noopener noreferrer">
+                Flagpedia / FlagCDN
+            </a>
+        </footer>
+    </main>
+</body>
+</html>
