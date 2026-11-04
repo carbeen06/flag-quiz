@@ -345,6 +345,7 @@ function showResults() {
 
 function backToSetup() {
     clearTimeout(autoNextTimer);
+    stopTimer();
     showScreen("setup");
     updateSelectionInfo();
 }
