@@ -37,6 +37,9 @@ let totalCountries = 0;
 let roundTotal = 0;
 let answered = false;
 let autoNextTimer = null;
+let timerInterval = null;
+let roundStartTime = 0;
+let roundTimes = [];
 
 // ---------- Utilidades ----------
 
@@ -69,6 +72,32 @@ function shuffle(list) {
     }
 
     return shuffled;
+}
+
+const timerElement = document.getElementById("timer");
+
+// Convierte milisegundos a formato mm:ss.
+function formatTime(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+    const seconds = String(totalSeconds % 60).padStart(2, "0");
+    return `${minutes}:${seconds}`;
+}
+
+function startRoundTimer() {
+    stopTimer();
+    roundStartTime = Date.now();
+    timerElement.textContent = `⏱ ${formatTime(0)}`;
+
+    timerInterval = setInterval(() => {
+        timerElement.textContent =
+            `⏱ ${formatTime(Date.now() - roundStartTime)}`;
+    }, 250);
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
 }
 
 // Rellena los selectores de letras.
@@ -155,8 +184,10 @@ function startQuiz() {
 
     totalCountries = selected.length;
     roundTotal = queue.length;
+    roundTimes = [];
 
     showScreen("quiz");
+    startRoundTimer();
     showQuestion();
 }
 
@@ -260,6 +291,15 @@ nextButton.addEventListener("click", goToNext);
 
 // Termina la ronda y prepara otra con los fallos.
 function finishRound() {
+    stopTimer();
+
+    roundTimes.push({
+        round,
+        ms: Date.now() - roundStartTime,
+        questions: roundTotal,
+        failed: failed.length
+    });
+
     if (failed.length > 0) {
         queue = shuffle(failed);
         failed = [];
@@ -267,6 +307,7 @@ function finishRound() {
         round++;
         roundTotal = queue.length;
 
+        startRoundTimer();
         showQuestion();
         return;
     }
@@ -277,6 +318,17 @@ function finishRound() {
 function showResults() {
     showScreen("results");
 
+    const totalMs = roundTimes.reduce((sum, r) => sum + r.ms, 0);
+
+    const roundsHtml = roundTimes
+        .map(r => `
+            <div>
+                Ronda ${r.round}: <strong>${formatTime(r.ms)}</strong>
+                · ${r.questions} banderas · ${r.failed} fallos
+            </div>
+        `)
+        .join("");
+
     document.getElementById("result-message").textContent =
         "¡Has conseguido acertar todas las banderas!";
 
@@ -285,6 +337,9 @@ function showResults() {
         <div>✅ Aciertos acumulados: <strong>${correctCount}</strong></div>
         <div>❌ Fallos acumulados: <strong>${wrongCount}</strong></div>
         <div>🔁 Rondas completadas: <strong>${round}</strong></div>
+        <div>⏱ Tiempo total: <strong>${formatTime(totalMs)}</strong></div>
+        <hr>
+        ${roundsHtml}
     `;
 }
 
