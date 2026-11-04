@@ -69,11 +69,6 @@
             <button id="start-button" class="primary-button">
                 Empezar a practicar →
             </button>
-
-            <div class="learning-note">
-                <span aria-hidden="true">💡</span>
-                <p><strong>Consejo:</strong> escribe el nombre sin preocuparte por tildes o mayúsculas.</p>
-            </div>
         </section>
 
         <!-- PANTALLA 2: QUIZ -->
@@ -125,7 +120,19 @@
             </button>
         </section>
 
-        <!-- PANTALLA 3: RESULTADOS -->
+        <!-- PANTALLA 3: REPASO ENTRE RONDAS -->
+        <section id="review" class="panel hidden">
+            <div class="result-icon" aria-hidden="true">🧠</div>
+            <p class="section-kicker">Repaso antes de continuar</p>
+            <h2>Estas banderas necesitan otra vuelta</h2>
+            <p>Fíjate en el país y en su bandera. Después volverán a aparecer en la siguiente ronda.</p>
+            <div id="review-flags" class="review-flags"></div>
+            <button id="continue-round-button" class="primary-button">
+                Continuar con la siguiente ronda →
+            </button>
+        </section>
+
+        <!-- PANTALLA 4: RESULTADOS -->
         <section id="results" class="panel hidden">
             <div class="result-icon" aria-hidden="true">🎉</div>
             <h2>¡Has terminado!</h2>
@@ -137,12 +144,7 @@
         </section>
 
         <footer>
-            <span>Hecho para aprender jugando</span>
-            <span class="footer-divider" aria-hidden="true">·</span>
-            Banderas de
-            <a href="https://flagcdn.com" target="_blank" rel="noopener noreferrer">
-                Flagpedia / FlagCDN
-            </a>
+            <span> 2026. <a href="https://github.com/catalinacatalinacatalina" target="_blank" rel="noopener noreferrer">catalinacatalinacatalina</a> y <a href="https://github.com/carbeen06" target="_blank" rel="noopener noreferrer">carbeen06</a></span>
         </footer>
     </main>
 </body>

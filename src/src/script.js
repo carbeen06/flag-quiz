@@ -4,6 +4,7 @@ import aliases from "./data/aliases.json";
 // ---------- Elementos de la página ----------
 const setup = document.getElementById("setup");
 const quiz = document.getElementById("quiz");
+const review = document.getElementById("review");
 const results = document.getElementById("results");
 
 const mode = document.getElementById("mode");
@@ -22,6 +23,8 @@ const answerForm = document.getElementById("answer-form");
 const feedback = document.getElementById("feedback");
 const nextButton = document.getElementById("next-button");
 const quitButton = document.getElementById("quit-button");
+const reviewFlags = document.getElementById("review-flags");
+const continueRoundButton = document.getElementById("continue-round-button");
 
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const localFlagsPath = "/assets/flags";
@@ -40,6 +43,7 @@ let autoNextTimer = null;
 let timerInterval = null;
 let roundStartTime = 0;
 let roundTimes = [];
+let pendingRound = [];
 
 // ---------- Utilidades ----------
 
@@ -160,6 +164,7 @@ function updateSelectionInfo() {
 function showScreen(screen) {
     setup.classList.toggle("hidden", screen !== "setup");
     quiz.classList.toggle("hidden", screen !== "quiz");
+    review.classList.toggle("hidden", screen !== "review");
     results.classList.toggle("hidden", screen !== "results");
 }
 
@@ -181,6 +186,7 @@ function startQuiz() {
     correctCount = 0;
     wrongCount = 0;
     answered = false;
+    pendingRound = [];
 
     totalCountries = selected.length;
     roundTotal = queue.length;
@@ -288,6 +294,7 @@ answerForm.addEventListener("submit", event => {
 });
 
 nextButton.addEventListener("click", goToNext);
+continueRoundButton.addEventListener("click", continueRound);
 
 // Termina la ronda y prepara otra con los fallos.
 function finishRound() {
@@ -301,18 +308,42 @@ function finishRound() {
     });
 
     if (failed.length > 0) {
-        queue = shuffle(failed);
+        pendingRound = shuffle(failed);
         failed = [];
 
         round++;
-        roundTotal = queue.length;
-
-        startRoundTimer();
-        showQuestion();
+        showReview();
         return;
     }
 
     showResults();
+}
+
+function showReview() {
+    reviewFlags.innerHTML = pendingRound
+        .map(country => `
+            <article class="review-flag">
+                <img
+                    src="${localFlagsPath}/${country.code}.svg"
+                    alt="Bandera de ${country.name}"
+                >
+                <strong>${country.name}</strong>
+            </article>
+        `)
+        .join("");
+
+    showScreen("review");
+    continueRoundButton.focus();
+}
+
+function continueRound() {
+    queue = pendingRound;
+    pendingRound = [];
+    roundTotal = queue.length;
+
+    startRoundTimer();
+    showScreen("quiz");
+    showQuestion();
 }
 
 function showResults() {
@@ -346,6 +377,7 @@ function showResults() {
 function backToSetup() {
     clearTimeout(autoNextTimer);
     stopTimer();
+    pendingRound = [];
     showScreen("setup");
     updateSelectionInfo();
 }
