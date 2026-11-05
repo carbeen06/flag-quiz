@@ -265,8 +265,6 @@ answerForm.addEventListener("submit", event => {
     const isCorrect = isCorrectAnswer(answer.value, currentCountry);
 
     answered = true;
-    answer.disabled = true;
-    answerForm.classList.add("hidden");
     feedback.classList.remove("hidden");
 
     if (isCorrect) {
@@ -286,7 +284,6 @@ answerForm.addEventListener("submit", event => {
 
         // Si fallas, esperas a que pulses el botón (o Enter).
         nextButton.classList.remove("hidden");
-        nextButton.focus();
     }
 
     document.getElementById("score").textContent =
