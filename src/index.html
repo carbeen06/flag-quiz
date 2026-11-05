@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Aprende a reconocer las banderas del mundo con sesiones de práctica adaptadas a tu ritmo.">
+    <meta name="description" content="Aprende a reconocer las banderas del mundo con sesiones de práctica adaptadas a tu ritmo. Learn the flags of the world.">
     <meta name="theme-color" content="#111827">
     <title>Flag Quiz | Aprende las banderas</title>
     <link rel="stylesheet" href="/src/style.css">
@@ -13,60 +13,68 @@
     <main class="app">
         <header class="header">
             <div class="logo" aria-hidden="true">🌍</div>
-            <p class="eyebrow">Aprendizaje activo</p>
+            <p class="eyebrow" data-i18n="eyebrow">Aprendizaje activo</p>
             <h1>Flag Quiz</h1>
-            <p>Entrena tu memoria y reconoce las banderas del mundo.</p>
+            <p data-i18n="subtitle">Entrena tu memoria y reconoce las banderas del mundo.</p>
         </header>
 
         <!-- PANTALLA 1: ELEGIR RANGO -->
         <section id="setup" class="panel">
             <div class="panel-heading">
                 <div>
-                    <p class="section-kicker">Paso 1 de 2</p>
-                    <h2>Prepara tu sesión</h2>
+                    <p class="section-kicker" data-i18n="step1">Paso 1 de 2</p>
+                    <h2 data-i18n="setupTitle">Prepara tu sesión</h2>
                 </div>
-                <span class="session-badge">193 banderas</span>
+                <span id="session-badge" class="session-badge"></span>
             </div>
-            <p>Empieza por una zona concreta o atrévete con el mapa completo.</p>
+            <p data-i18n="setupIntro">Empieza por una zona concreta o atrévete con el mapa completo.</p>
 
             <div class="field-group">
-                <label for="mode">Tipo de selección</label>
+                <label for="language" data-i18n="language">Idioma de la interfaz</label>
+                <select id="language">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+
+            <div class="field-group">
+                <label for="mode" data-i18n="mode">Tipo de selección</label>
                 <select id="mode">
-                    <option value="letters">Por rango de letras</option>
-                    <option value="continent">Por continente</option>
-                    <option value="all">Todos los países</option>
+                    <option value="letters" data-i18n="modeLetters">Por rango de letras</option>
+                    <option value="continent" data-i18n="modeContinent">Por continente</option>
+                    <option value="all" data-i18n="modeAll">Todos los países</option>
                 </select>
             </div>
 
             <div id="letter-options" class="field-group">
                 <div class="two-columns">
                     <div>
-                        <label for="start-letter">Desde la letra</label>
+                        <label for="start-letter" data-i18n="fromLetter">Desde la letra</label>
                         <select id="start-letter"></select>
                     </div>
                     <div>
-                        <label for="end-letter">Hasta la letra</label>
+                        <label for="end-letter" data-i18n="toLetter">Hasta la letra</label>
                         <select id="end-letter"></select>
                     </div>
                 </div>
             </div>
 
             <div id="continent-options" class="field-group hidden">
-                <label for="continent">Continente</label>
+                <label for="continent" data-i18n="continent">Continente</label>
                 <select id="continent">
-                    <option value="all">Todos los continentes</option>
-                    <option value="Europa">Europa</option>
-                    <option value="Asia">Asia</option>
-                    <option value="África">África</option>
-                    <option value="América del Norte">América del Norte</option>
-                    <option value="América del Sur">América del Sur</option>
-                    <option value="Oceanía">Oceanía</option>
+                    <option value="all" data-i18n="allContinents">Todos los continentes</option>
+                    <option value="Europa" data-i18n="europe">Europa</option>
+                    <option value="Asia" data-i18n="asia">Asia</option>
+                    <option value="África" data-i18n="africa">África</option>
+                    <option value="América del Norte" data-i18n="northAmerica">América del Norte</option>
+                    <option value="América del Sur" data-i18n="southAmerica">América del Sur</option>
+                    <option value="Oceanía" data-i18n="oceania">Oceanía</option>
                 </select>
             </div>
 
             <p id="selection-info" class="info" aria-live="polite"></p>
 
-            <button id="start-button" class="primary-button">
+            <button id="start-button" class="primary-button" data-i18n="start">
                 Empezar a practicar →
             </button>
         </section>
@@ -75,7 +83,7 @@
         <section id="quiz" class="panel hidden">
             <div class="quiz-top">
                 <div>
-                    <p class="section-kicker">Paso 2 de 2</p>
+                    <p class="section-kicker" data-i18n="step2">Paso 2 de 2</p>
                     <span id="progress">Pregunta 1</span>
                 </div>
                 <span id="timer">⏱ 00:00</span>
@@ -87,35 +95,36 @@
             </div>
 
             <div class="flag-container">
-                <img id="flag" src="" alt="Bandera que debes identificar">
+                <img id="flag" src="" alt="">
             </div>
 
-            <h2>¿De qué país es esta bandera?</h2>
+            <h2 data-i18n="question">¿De qué país es esta bandera?</h2>
             <p id="round-info" class="info" aria-live="polite"></p>
 
             <form id="answer-form">
-                <label for="answer">Nombre del país</label>
+                <label for="answer" data-i18n="answerLabel">Nombre del país</label>
                 <input
                     id="answer"
                     type="text"
+                    data-i18n-placeholder="placeholder"
                     placeholder="Escribe el país..."
                     autocomplete="off"
                     autocapitalize="off"
                     spellcheck="false"
                     required
                 >
-                <button type="submit" class="primary-button">
+                <button type="submit" class="primary-button" data-i18n="check">
                     Comprobar respuesta
                 </button>
             </form>
 
             <div id="feedback" class="feedback hidden" role="status" aria-live="polite"></div>
 
-            <button id="next-button" class="secondary-button hidden">
+            <button id="next-button" class="secondary-button hidden" data-i18n="next">
                 Siguiente bandera →
             </button>
 
-            <button id="quit-button" class="link-button">
+            <button id="quit-button" class="link-button" data-i18n="quit">
                 Salir y elegir otro rango
             </button>
         </section>
@@ -123,11 +132,11 @@
         <!-- PANTALLA 3: REPASO ENTRE RONDAS -->
         <section id="review" class="panel hidden">
             <div class="result-icon" aria-hidden="true">🧠</div>
-            <p class="section-kicker">Repaso antes de continuar</p>
-            <h2>Estas banderas necesitan otra vuelta</h2>
-            <p>Fíjate en el país y en su bandera. Después volverán a aparecer en la siguiente ronda.</p>
+            <p class="section-kicker" data-i18n="reviewKicker">Repaso antes de continuar</p>
+            <h2 data-i18n="reviewTitle">Estas banderas necesitan otra vuelta</h2>
+            <p data-i18n="reviewText">Fíjate en el país y en su bandera. Después volverán a aparecer en la siguiente ronda.</p>
             <div id="review-flags" class="review-flags"></div>
-            <button id="continue-round-button" class="primary-button">
+            <button id="continue-round-button" class="primary-button" data-i18n="continueRound">
                 Continuar con la siguiente ronda →
             </button>
         </section>
@@ -135,10 +144,10 @@
         <!-- PANTALLA 4: RESULTADOS -->
         <section id="results" class="panel hidden">
             <div class="result-icon" aria-hidden="true">🎉</div>
-            <h2>¡Has terminado!</h2>
+            <h2 data-i18n="resultsTitle">¡Has terminado!</h2>
             <p id="result-message" aria-live="polite"></p>
             <div id="result-stats" class="stats"></div>
-            <button id="restart-button" class="primary-button">
+            <button id="restart-button" class="primary-button" data-i18n="restart">
                 Elegir otro quiz
             </button>
         </section>

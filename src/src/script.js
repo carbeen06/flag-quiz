@@ -1,5 +1,6 @@
 import countries from "./data/countries.json";
 import aliases from "./data/aliases.json";
+import translations from "./data/translations.json";
 
 // ---------- Elementos de la página ----------
 const setup = document.getElementById("setup");
@@ -7,6 +8,7 @@ const quiz = document.getElementById("quiz");
 const review = document.getElementById("review");
 const results = document.getElementById("results");
 
+const languageSelect = document.getElementById("language");
 const mode = document.getElementById("mode");
 const startLetter = document.getElementById("start-letter");
 const endLetter = document.getElementById("end-letter");
@@ -16,6 +18,7 @@ const letterOptions = document.getElementById("letter-options");
 const continentOptions = document.getElementById("continent-options");
 const selectionInfo = document.getElementById("selection-info");
 const startButton = document.getElementById("start-button");
+const sessionBadge = document.getElementById("session-badge");
 
 const flag = document.getElementById("flag");
 const answer = document.getElementById("answer");
@@ -25,6 +28,7 @@ const nextButton = document.getElementById("next-button");
 const quitButton = document.getElementById("quit-button");
 const reviewFlags = document.getElementById("review-flags");
 const continueRoundButton = document.getElementById("continue-round-button");
+const timerElement = document.getElementById("timer");
 
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const localFlagsPath = "/assets/flags";
@@ -45,6 +49,74 @@ let roundStartTime = 0;
 let roundTimes = [];
 let pendingRound = [];
 
+// ---------- Idioma de la interfaz ----------
+
+function detectLanguage() {
+    try {
+        const saved = localStorage.getItem("flagquiz-lang");
+        if (saved && translations[saved]) return saved;
+    } catch {
+        // localStorage no disponible: seguimos sin guardar.
+    }
+    return navigator.language?.toLowerCase().startsWith("en") ? "en" : "es";
+}
+
+let lang = detectLanguage();
+
+// Devuelve el texto traducido y sustituye las {variables}.
+function t(key, vars = {}) {
+    const text = translations[lang]?.[key] ?? translations.es[key] ?? key;
+    return text.replace(/\{(\w+)\}/g, (_, name) => vars[name] ?? "");
+}
+
+// Los nombres de los países se muestran según el idioma activo.
+function getName(country) {
+    if (lang === "en") {
+        const key = normalize(country.name);
+        const countryAliases = aliases[key];
+        if (countryAliases && countryAliases.length > 0) {
+            const formalEnglish = countryAliases.find(a => 
+                a.includes("united kingdom") || 
+                a.includes("united states") || 
+                a.includes("republic of") ||
+                a.length > 3
+            ) || countryAliases[countryAliases.length - 1];
+            
+            return formalEnglish.replace(/\b\w/g, l => l.toUpperCase());
+        }
+    }
+    return country.name;
+}
+
+// Rellena todos los textos fijos del HTML.
+function applyTranslations() {
+    document.documentElement.lang = lang;
+    document.title = t("pageTitle");
+
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+        el.textContent = t(el.dataset.i18n);
+    });
+
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+        el.placeholder = t(el.dataset.i18nPlaceholder);
+    });
+
+    sessionBadge.textContent = t("badge", { n: countries.length });
+}
+
+function setLanguage(newLang) {
+    lang = newLang;
+
+    try {
+        localStorage.setItem("flagquiz-lang", lang);
+    } catch {
+        // Ignorar.
+    }
+
+    applyTranslations();
+    updateSelectionInfo();
+}
+
 // ---------- Utilidades ----------
 
 // Quita mayúsculas, tildes y espacios sobrantes.
@@ -57,13 +129,23 @@ function normalize(text) {
         .replace(/\s+/g, " ");
 }
 
-// Comprueba el nombre principal y sus alternativas.
-function isCorrectAnswer(input, country) {
-    const given = normalize(input);
-    const mainName = normalize(country.name);
-    const acceptedNames = [mainName, ...(aliases[mainName] || [])];
+// Además ignora puntuación: "Côte d'Ivoire" = "cote d ivoire".
+function looseNormalize(text) {
+    return normalize(text)
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
 
-    return acceptedNames.some(name => normalize(name) === given);
+// Todos los nombres válidos de un país (español, inglés y variantes).
+function getAcceptedNames(country) {
+    const key = normalize(country.name);
+    return [country.name, ...(aliases[key] || [])];
+}
+
+function isCorrectAnswer(input, country) {
+    const given = looseNormalize(input);
+    return getAcceptedNames(country).some(name => looseNormalize(name) === given);
 }
 
 // Mezcla una lista aleatoriamente (Fisher-Yates).
@@ -77,8 +159,6 @@ function shuffle(list) {
 
     return shuffled;
 }
-
-const timerElement = document.getElementById("timer");
 
 // Convierte milisegundos a formato mm:ss.
 function formatTime(ms) {
@@ -150,14 +230,12 @@ function updateSelectionInfo() {
     const selected = getSelectedCountries();
 
     if (mode.value === "letters" && startLetter.value > endLetter.value) {
-        selectionInfo.textContent =
-            "La letra inicial debe ser anterior a la final.";
+        selectionInfo.textContent = t("invalidRange");
         startButton.disabled = true;
         return;
     }
 
-    selectionInfo.textContent =
-        `${selected.length} países incluidos en este quiz.`;
+    selectionInfo.textContent = t("selectionInfo", { n: selected.length });
     startButton.disabled = selected.length === 0;
 }
 
@@ -209,11 +287,11 @@ function showQuestion() {
     answered = false;
 
     flag.src = `${localFlagsPath}/${currentCountry.code}.svg`;
-    flag.alt = "Bandera para identificar";
+    flag.alt = t("flagAlt");
     flag.onerror = () => {
-        flag.alt = "No se pudo cargar esta bandera";
+        flag.alt = t("flagError");
         feedback.className = "feedback incorrect";
-        feedback.textContent = "No se ha podido cargar la bandera local. Inténtalo de nuevo.";
+        feedback.textContent = t("flagError");
         feedback.classList.remove("hidden");
     };
 
@@ -226,19 +304,19 @@ function showQuestion() {
     answerForm.classList.remove("hidden");
     nextButton.classList.add("hidden");
 
-    document.getElementById("progress").textContent =
-        `Pregunta ${roundTotal - queue.length + 1} de ${roundTotal}`;
+    document.getElementById("progress").textContent = t("progress", {
+        current: roundTotal - queue.length + 1,
+        total: roundTotal
+    });
 
     document.getElementById("progress-bar").style.width =
         `${((roundTotal - queue.length) / roundTotal) * 100}%`;
 
     document.getElementById("score").textContent =
-        `${correctCount} aciertos`;
+        t("score", { n: correctCount });
 
     document.getElementById("round-info").textContent =
-        round === 1
-            ? "Ronda inicial: intenta recordar todos los países."
-            : `Ronda de repaso ${round}: repetimos las que has fallado.`;
+        round === 1 ? t("roundFirst") : t("roundReview", { n: round });
 
     answer.focus();
 }
@@ -266,11 +344,12 @@ answerForm.addEventListener("submit", event => {
 
     answered = true;
     feedback.classList.remove("hidden");
+    answerForm.classList.add("hidden"); // Oculta el formulario y el botón de comprobar respuesta
 
     if (isCorrect) {
         correctCount++;
         feedback.className = "feedback correct";
-        feedback.textContent = "¡Correcto! 🎉";
+        feedback.textContent = t("correct");
 
         // Si aciertas, pasa sola a la siguiente.
         autoNextTimer = setTimeout(goToNext, 800);
@@ -279,19 +358,25 @@ answerForm.addEventListener("submit", event => {
         failed.push(currentCountry);
 
         feedback.className = "feedback incorrect";
-        feedback.textContent =
-            `Incorrecto. La respuesta correcta era: ${currentCountry.name}.`;
+        feedback.textContent = t("incorrect", { name: getName(currentCountry) });
 
-        // Si fallas, esperas a que pulses el botón (o Enter).
+        // Si fallas, muestra el botón de siguiente bandera.
         nextButton.classList.remove("hidden");
     }
 
     document.getElementById("score").textContent =
-        `${correctCount} aciertos`;
+        t("score", { n: correctCount });
 });
 
 nextButton.addEventListener("click", goToNext);
 continueRoundButton.addEventListener("click", continueRound);
+// Permite pulsar Enter para ir a la siguiente bandera cuando estás en el botón de fallo
+document.addEventListener("keydown", event => {
+    if (event.key === "Enter" && !nextButton.classList.contains("hidden")) {
+        event.preventDefault();
+        goToNext();
+    }
+});
 
 // Termina la ronda y prepara otra con los fallos.
 function finishRound() {
@@ -322,9 +407,9 @@ function showReview() {
             <article class="review-flag">
                 <img
                     src="${localFlagsPath}/${country.code}.svg"
-                    alt="Bandera de ${country.name}"
+                    alt="${t("flagOf", { name: getName(country) })}"
                 >
-                <strong>${country.name}</strong>
+                <strong>${getName(country)}</strong>
             </article>
         `)
         .join("");
@@ -350,22 +435,23 @@ function showResults() {
 
     const roundsHtml = roundTimes
         .map(r => `
-            <div>
-                Ronda ${r.round}: <strong>${formatTime(r.ms)}</strong>
-                · ${r.questions} banderas · ${r.failed} fallos
-            </div>
+            <div>${t("roundLine", {
+                round: r.round,
+                time: formatTime(r.ms),
+                questions: r.questions,
+                failed: r.failed
+            })}</div>
         `)
         .join("");
 
-    document.getElementById("result-message").textContent =
-        "¡Has conseguido acertar todas las banderas!";
+    document.getElementById("result-message").textContent = t("resultsMessage");
 
     document.getElementById("result-stats").innerHTML = `
-        <div>🌍 Países estudiados: <strong>${totalCountries}</strong></div>
-        <div>✅ Aciertos acumulados: <strong>${correctCount}</strong></div>
-        <div>❌ Fallos acumulados: <strong>${wrongCount}</strong></div>
-        <div>🔁 Rondas completadas: <strong>${round}</strong></div>
-        <div>⏱ Tiempo total: <strong>${formatTime(totalMs)}</strong></div>
+        <div>🌍 ${t("statStudied")}: <strong>${totalCountries}</strong></div>
+        <div>✅ ${t("statCorrect")}: <strong>${correctCount}</strong></div>
+        <div>❌ ${t("statWrong")}: <strong>${wrongCount}</strong></div>
+        <div>🔁 ${t("statRounds")}: <strong>${round}</strong></div>
+        <div>⏱ ${t("statTime")}: <strong>${formatTime(totalMs)}</strong></div>
         <hr>
         ${roundsHtml}
     `;
@@ -383,6 +469,7 @@ function backToSetup() {
 document.getElementById("restart-button").addEventListener("click", backToSetup);
 quitButton.addEventListener("click", backToSetup);
 
+languageSelect.addEventListener("change", () => setLanguage(languageSelect.value));
 mode.addEventListener("change", updateMode);
 startLetter.addEventListener("change", updateSelectionInfo);
 endLetter.addEventListener("change", updateSelectionInfo);
@@ -390,5 +477,7 @@ continent.addEventListener("change", updateSelectionInfo);
 
 startButton.addEventListener("click", startQuiz);
 
-// Estado inicial.
+// ---------- Estado inicial ----------
+languageSelect.value = lang;
+applyTranslations();
 updateMode();
