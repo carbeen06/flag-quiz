@@ -98,6 +98,27 @@ body::before {
     line-height: 1.5;
 }
 
+.language-switcher {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin: 0 0 12px;
+}
+
+.language-switcher label {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 11px;
+}
+
+.language-switcher select {
+    width: auto;
+    min-height: 38px;
+    padding: 7px 30px 7px 10px;
+    font-size: 13px;
+}
+
 .panel {
     width: 100%;
     padding: 34px;
@@ -460,6 +481,10 @@ footer a {
 
     .panel {
         padding: 26px 18px;
+    }
+
+    .language-switcher {
+        margin-bottom: 10px;
     }
 
     .panel-heading {

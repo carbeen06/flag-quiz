@@ -32,6 +32,7 @@ const timerElement = document.getElementById("timer");
 
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const localFlagsPath = "/assets/flags";
+const englishCountryNames = new Intl.DisplayNames(["en"], { type: "region" });
 
 // ---------- Estado del juego ----------
 let queue = [];
@@ -72,18 +73,7 @@ function t(key, vars = {}) {
 // Los nombres de los países se muestran según el idioma activo.
 function getName(country) {
     if (lang === "en") {
-        const key = normalize(country.name);
-        const countryAliases = aliases[key];
-        if (countryAliases && countryAliases.length > 0) {
-            const formalEnglish = countryAliases.find(a => 
-                a.includes("united kingdom") || 
-                a.includes("united states") || 
-                a.includes("republic of") ||
-                a.length > 3
-            ) || countryAliases[countryAliases.length - 1];
-            
-            return formalEnglish.replace(/\b\w/g, l => l.toUpperCase());
-        }
+        return englishCountryNames.of(country.code.toUpperCase()) || country.name;
     }
     return country.name;
 }
@@ -140,7 +130,7 @@ function looseNormalize(text) {
 // Todos los nombres válidos de un país (español, inglés y variantes).
 function getAcceptedNames(country) {
     const key = normalize(country.name);
-    return [country.name, ...(aliases[key] || [])];
+    return [country.name, getName(country), ...(aliases[key] || [])];
 }
 
 function isCorrectAnswer(input, country) {
@@ -221,7 +211,7 @@ function getSelectedCountries() {
     }
 
     return countries.filter(country => {
-        const firstLetter = normalize(country.name).charAt(0).toUpperCase();
+        const firstLetter = normalize(getName(country)).charAt(0).toUpperCase();
         return firstLetter >= start && firstLetter <= end;
     });
 }

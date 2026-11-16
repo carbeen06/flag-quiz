@@ -18,6 +18,14 @@
             <p data-i18n="subtitle">Entrena tu memoria y reconoce las banderas del mundo.</p>
         </header>
 
+        <div class="language-switcher">
+            <label for="language" data-i18n="language">Idioma de la interfaz</label>
+            <select id="language">
+                <option value="es">Español</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+
         <!-- PANTALLA 1: ELEGIR RANGO -->
         <section id="setup" class="panel">
             <div class="panel-heading">
@@ -28,14 +36,6 @@
                 <span id="session-badge" class="session-badge"></span>
             </div>
             <p data-i18n="setupIntro">Empieza por una zona concreta o atrévete con el mapa completo.</p>
-
-            <div class="field-group">
-                <label for="language" data-i18n="language">Idioma de la interfaz</label>
-                <select id="language">
-                    <option value="es">Español</option>
-                    <option value="en">English</option>
-                </select>
-            </div>
 
             <div class="field-group">
                 <label for="mode" data-i18n="mode">Tipo de selección</label>
